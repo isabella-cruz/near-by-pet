@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">NearByPet</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_name">NearByPets</string>
+    <string name="title_activity_maps">NearByPets</string>
 </resources>

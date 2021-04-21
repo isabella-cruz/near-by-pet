@@ -34,10 +34,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchView: SearchView
     private lateinit var client: FusedLocationProviderClient
 
-
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -185,6 +181,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             checkPermission()
             return
         }
+
+        val latLng2 = LatLng(-23.6931778, -46.616407)
+        val latLng3 = LatLng(-23.6927823,-46.617248)
+        mMap!!.addMarker(MarkerOptions().position(latLng2).title("Outro Abrigo aqui"))
+            .setIcon(BitmapDescriptorFactory.defaultMarker(
+                BitmapDescriptorFactory.HUE_VIOLET))
+
+        mMap!!.addMarker(MarkerOptions().position(latLng3).snippet("Teste").title("Teste abrigo"))
+            .setIcon(BitmapDescriptorFactory.defaultMarker(
+                BitmapDescriptorFactory.HUE_VIOLET))
+
+
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
 

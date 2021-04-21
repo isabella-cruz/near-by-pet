@@ -13,7 +13,7 @@ class SplashScreenActivity : AppCompatActivity() {
         val handle = Handler()
         handle.postDelayed(Runnable {
             showHome() },
-            4000)
+            400)
     }
 
     private fun showHome() {

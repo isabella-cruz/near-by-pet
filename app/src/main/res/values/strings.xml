@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NearByPets</string>
     <string name="title_activity_maps">NearByPets</string>
+    <string name="api_key">AIzaSyCnv3p8vXyyQIKs7zl4VNtZ6q1G1UnIyO0</string>
 </resources>

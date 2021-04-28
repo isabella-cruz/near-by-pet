@@ -11,19 +11,22 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import java.io.IOException
 
 
@@ -33,6 +36,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var searchView: SearchView
     private lateinit var client: FusedLocationProviderClient
+    private lateinit var placesClient: PlacesClient
+    private lateinit var apiKey: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,14 +112,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .addOnSuccessListener { location ->
                 if (location != null) {
                     val latLng = LatLng(location.latitude, location.longitude)
-                    mMap!!.addMarker(MarkerOptions().position(latLng).title(location.toString()))
-                        .setIcon(BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.HUE_VIOLET))
-                    mMap!!.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                    mMap.addMarker(MarkerOptions().position(latLng).title("Você está aqui"))
+                        .setIcon(
+                            BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_VIOLET
+                            )
+                        )
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
                 } else {
-                    Log.i("Teste",
-                        "null")
+                    Log.i(
+                        "Teste",
+                        "null"
+                    )
                 }
             }
             .addOnFailureListener { }
@@ -132,8 +143,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val settingsClient = LocationServices.getSettingsClient(this)
         settingsClient.checkLocationSettings(builder.build())
             .addOnSuccessListener { locationResponse ->
-                Log.i("Teste",
-                    locationResponse.locationSettingsStates.isNetworkLocationPresent.toString())
+                Log.i(
+                    "Teste",
+                    locationResponse.locationSettingsStates.isNetworkLocationPresent.toString()
+                )
             }
             .addOnFailureListener { e ->
                 if (e is ResolvableApiException) {
@@ -182,47 +195,86 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
-        val latLng2 = LatLng(-23.6931778, -46.616407)
-        val latLng3 = LatLng(-23.6927823,-46.617248)
-        mMap!!.addMarker(MarkerOptions().position(latLng2).title("Outro Abrigo aqui"))
-            .setIcon(BitmapDescriptorFactory.defaultMarker(
-                BitmapDescriptorFactory.HUE_VIOLET))
 
-        mMap!!.addMarker(MarkerOptions().position(latLng3).snippet("Teste").title("Teste abrigo"))
-            .setIcon(BitmapDescriptorFactory.defaultMarker(
-                BitmapDescriptorFactory.HUE_VIOLET))
+        val larDosGatos = MockedAdresses(
+            -23.6927823,
+            -46.617248,
+            "Lar dos Gatos"
+        )
+        val casaDosAnjos = MockedAdresses(
+            -23.698499,
+            -46.6188035,
+            "Casa dos Anjos"
+        )
+        val abrigoAumigos = MockedAdresses(
+            -23.6935524,
+            -46.6133873,
+            "Abrigo dos Aumigos"
+        )
 
+        val caoSemDono = MockedAdresses(
+            -23.6944661,
+            -46.6164987,
+            "Associação Cão sem Dono"
+        )
+
+        val list = listOf(larDosGatos, casaDosAnjos, abrigoAumigos, caoSemDono)
+        list.forEach{
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(it.latitude, it.longitude))
+                    .title(it.title)
+                    .icon(
+                        BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.HUE_VIOLET
+                        )
+                    )
+            )
+        }
 
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
 
         }
 
-
     private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(this@MapsActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION) !==
+        if (ContextCompat.checkSelfPermission(
+                this@MapsActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) !==
             PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MapsActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(this@MapsActivity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this@MapsActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )) {
+                ActivityCompat.requestPermissions(
+                    this@MapsActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+                )
             } else {
-                ActivityCompat.requestPermissions(this@MapsActivity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                ActivityCompat.requestPermissions(
+                    this@MapsActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+                )
             }
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             1 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED) {
-                    if ((ContextCompat.checkSelfPermission(this@MapsActivity,
-                            Manifest.permission.ACCESS_FINE_LOCATION) ===
-                            PackageManager.PERMISSION_GRANTED)) {
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+                    if ((ContextCompat.checkSelfPermission(
+                            this@MapsActivity,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) ===
+                                PackageManager.PERMISSION_GRANTED)
+                    ) {
                         Toast.makeText(
                             this,
                             "Permissão de localização concedida",
@@ -230,10 +282,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         ).show()
                     }
                 } else {
-                    Toast.makeText(this,
+                    Toast.makeText(
+                        this,
                         "Permissão negada. Para utilizar o aplicativo, " +
-                            "permita o acesso a localização",
-                        Toast.LENGTH_LONG).show()
+                                "permita o acesso a localização",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 return
             }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="circleImageViewStyle">
+        <![CDATA[<style name="circleImageViewStyle" >     <item name="cornerFamily">rounded</item>     <item name="cornerSize">50%</item> </style> ]]></style>
+</resources>

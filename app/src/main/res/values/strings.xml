@@ -2,4 +2,12 @@
     <string name="app_name">NearByPets</string>
     <string name="title_activity_maps">NearByPets</string>
     <string name="api_key">AIzaSyCnv3p8vXyyQIKs7zl4VNtZ6q1G1UnIyO0</string>
+    <string name="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Suspendisse eleifend consectetur lorem a lacinia. Duis augue elit, condimentum
+        id diam eu, blandit auctor nisl. Class aptent taciti sociosqu ad litora torquent
+        per conubia nostra, per inceptos himenaeos. Donec leo augue, auctor nec nunc vel,
+        ultrices commodo urna. Donec venenatis neque elit, ut rutrum sem tincidunt ut.
+        Sed porta arcu quis sem efficitur vestibulum. Donec quis libero massa. Nulla
+        eros eros, rutrum a felis et, maximus tempus odio. Vivamus tortor erat, feugiat et
+        erat in, suscipit mollis enim.</string>
 </resources>

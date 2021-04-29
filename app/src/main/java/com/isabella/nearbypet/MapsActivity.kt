@@ -2,47 +2,52 @@ package com.isabella.nearbypet
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import java.io.IOException
 
 
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "DEPRECATED_IDENTITY_EQUALS")
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     private lateinit var mMap: GoogleMap
     private lateinit var searchView: SearchView
     private lateinit var client: FusedLocationProviderClient
-    private lateinit var placesClient: PlacesClient
-    private lateinit var apiKey: String
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
 
         client = LocationServices.getFusedLocationProviderClient(this)
 
@@ -83,8 +88,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     // on below line we are adding marker to that position.
                     mMap!!.addMarker(MarkerOptions().position(latLng).title(location))
-                        .setIcon(BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.HUE_VIOLET))
+                        .setIcon(
+                            BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_VIOLET
+                            )
+                        )
 
                     // below line is to animate camera to that position.
                     mMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
@@ -218,6 +226,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             "Associação Cão sem Dono"
         )
 
+
+
         val list = listOf(larDosGatos, casaDosAnjos, abrigoAumigos, caoSemDono)
         list.forEach{
             mMap.addMarker(
@@ -232,8 +242,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
         }
 
+
+       mMap.setOnMarkerClickListener(object: GoogleMap.OnMarkerClickListener {
+           override fun onMarkerClick(marker: Marker): Boolean {
+               if (marker.title.equals("Abrigo dos Aumigos")) {
+                   val intent = Intent(this@MapsActivity, OngsActivity::class.java)
+                   startActivity(intent)
+               }
+               return false
+           }
+
+
+       } )
+
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
+        mMap.setOnMapClickListener(this)
 
         }
 
@@ -292,6 +316,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 return
             }
         }
+    }
+
+
+    override fun onMapClick(p0: LatLng) {
+        TODO("Not yet implemented")
     }
 
 }

@@ -140,12 +140,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 //      Setting the interval that my request will capture the location of the user
 //      Setting the locations of the others apps to my app consume (nearby locations)
 //      Setting the precision of my location and putting the economy of my battery.
-        val locationRequest : LocationRequest = LocationRequest.create()
+        val locationRequest: LocationRequest = LocationRequest.create()
         locationRequest.interval = 15 * 1000
         locationRequest.fastestInterval = 5 * 1000
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 
-        val builder : LocationSettingsRequest.Builder = LocationSettingsRequest.Builder()
+        val builder: LocationSettingsRequest.Builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
 //      Checking if my configs is correct
         val settingsClient = LocationServices.getSettingsClient(this)
@@ -167,16 +167,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             }
 
         val locationCallback: LocationCallback = object : LocationCallback() {
-//          Capture current location after 15sec
+            //          Capture current location after 15sec
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                    if (locationResult == null) {
-                        Log.i("Teste2", "Local is null")
-                        return
-                    }
-                    for (location: Location in locationResult.locations) {
-                        Log.i("Teste2", location.latitude.toString())
-                    }
+                if (locationResult == null) {
+                    Log.i("Teste2", "Local is null")
+                    return
+                }
+                for (location: Location in locationResult.locations) {
+                    Log.i("Teste2", location.latitude.toString())
+                }
             }
 
             override fun onLocationAvailability(locationAvailability: LocationAvailability) {
@@ -185,9 +185,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             }
         }
 
+        val valDaFunTest: String = funTest("Oie", "Cesar")
+        Log.i("fun", "Testando fun $valDaFunTest")
+
         client.requestLocationUpdates(locationRequest, locationCallback, null)
     }
 
+    fun funTest(a: String, b: String): String {
+        return a + b
+    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -207,59 +213,58 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         val larDosGatos = MockedAdresses(
             -23.6927823,
             -46.617248,
-            "Lar dos Gatos"
-        )
+            "Lar dos Gatos",
+        "1")
         val casaDosAnjos = MockedAdresses(
             -23.698499,
             -46.6188035,
-            "Casa dos Anjos"
-        )
+            "Casa dos Anjos",
+        "2")
         val abrigoAumigos = MockedAdresses(
             -23.6935524,
             -46.6133873,
-            "Abrigo dos Aumigos"
+            "Abrigo dos Aumigos",
+            "3"
         )
 
         val caoSemDono = MockedAdresses(
             -23.6944661,
             -46.6164987,
-            "Associação Cão sem Dono"
+            "Associação Cão sem Dono",
+            "4"
         )
 
 
-
         val list = listOf(larDosGatos, casaDosAnjos, abrigoAumigos, caoSemDono)
-        list.forEach{
-            mMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(it.latitude, it.longitude))
-                    .title(it.title)
-                    .icon(
-                        BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.HUE_VIOLET
-                        )
+        list.forEach {
+            val markerOptions = MarkerOptions()
+                .position(LatLng(it.latitude, it.longitude))
+                .title(it.title)
+                .icon(
+                    BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_VIOLET
                     )
-            )
+                )
+            val marker =  mMap.addMarker(markerOptions)
+            marker.tag = it.id
         }
 
 
-       mMap.setOnMarkerClickListener(object: GoogleMap.OnMarkerClickListener {
-           override fun onMarkerClick(marker: Marker): Boolean {
-               if (marker.title.equals("Abrigo dos Aumigos")) {
-                   val intent = Intent(this@MapsActivity, OngsActivity::class.java)
-                   startActivity(intent)
-               }
-               return false
-           }
+        mMap.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
+            override fun onMarkerClick(marker: Marker): Boolean {
+                    val intent = Intent(this@MapsActivity, OngsActivity::class.java)
+                    startActivity(intent)
+                return false
+            }
 
 
-       } )
+        })
 
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.setOnMapClickListener(this)
 
-        }
+    }
 
     private fun checkPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -297,7 +302,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                             this@MapsActivity,
                             Manifest.permission.ACCESS_FINE_LOCATION
                         ) ===
-                                PackageManager.PERMISSION_GRANTED)
+                            PackageManager.PERMISSION_GRANTED)
                     ) {
                         Toast.makeText(
                             this,
@@ -309,7 +314,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                     Toast.makeText(
                         this,
                         "Permissão negada. Para utilizar o aplicativo, " +
-                                "permita o acesso a localização",
+                            "permita o acesso a localização",
                         Toast.LENGTH_LONG
                     ).show()
                 }
